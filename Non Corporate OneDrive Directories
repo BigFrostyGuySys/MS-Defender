@@ -1,0 +1,34 @@
+DeviceFileEvents
+| where Timestamp > ago(30d)
+
+// Identify OneDrive-related paths
+| where FolderPath has @"\OneDrive"
+    or FolderPath has @"\OneDrive - Personal"
+    or FolderPath has @"\OneDrive -"
+    or FolderPath has @"\OneDrive @"
+    or FolderPath has @"\OneDrive\"
+    or FolderPath has @"\OneDrive -\"
+
+// Normalize for consistent filtering
+| extend p = tolower(FolderPath)
+
+// Exclude noisy user directories
+| where not(p has @"\appdata\")
+
+// Exclude the corporation's expected OneDrive directory
+| where not(p has @"onedrive - [expected directory name]")
+
+// Exclude OS and program directories
+| where not(p has @":\windows\")
+| where not(p has @":\program files\")
+| where not(p has @":\program files (x86)\")
+| where not(p has @":\program data\")
+| where not(p has @"\downloads\")
+
+// Final output
+| project Timestamp,
+          DeviceName,
+          FolderPath,
+          FileName,
+          InitiatingProcessAccountDomain,
+          InitiatingProcessAccountName
