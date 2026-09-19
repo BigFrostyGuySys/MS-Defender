@@ -1,7 +1,12 @@
 DeviceFileEvents
 | where ActionType == "FileCreated"
-| extend FP =tolower(FolderPath)
-| where FP contains "appdata"
-| extend FN = tolower(FileName)
-| where FN contains ".crx"
-| project Timestamp, DeviceName, FileName, FolderPath, InitiatingProcessFileName, InitiatingProcessCommandLine
+| extend strFolderLower = tolower(FolderPath)
+| where strFolderLower contains "appdata"
+| extend strFileLower = tolower(FileName)
+| where strFileLower contains ".crx"
+| project Timestamp,
+          DeviceName,
+          FileName,
+          FolderPath,
+          InitiatingProcessFileName,
+          InitiatingProcessCommandLine
