@@ -1,5 +1,3 @@
-```kql
-
 DeviceFileEvents
 | where ActionType == "FileCreated"
 | extend FP =tolower(FolderPath)
